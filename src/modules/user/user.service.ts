@@ -5,7 +5,7 @@ import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
 import { envVars } from "../../config/env";
 import { User } from "./user.model";
-import { Wallet } from "../wallet/wallet.model";
+import { WalletServices } from "../wallet/wallet.service";
 const createUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
   const isUserExist = await User.findOne({ email });
@@ -26,8 +26,10 @@ const createUser = async (payload: Partial<IUser>) => {
     auths: [authProvider],
     ...rest,
   });
-  console.log(user);
-  const wallet = await Wallet.create({ balance: 50, owner: user._id });
+  const wallet = await WalletServices.createWallet({
+    balance: 50,
+    owner: user._id,
+  });
   user.walletId = wallet._id;
   await user.save();
   return user;
