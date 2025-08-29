@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 export enum ROLE {
   ADMIN = "ADMIN",
   USER = "USER",
@@ -26,7 +28,7 @@ export interface IUser {
   isVerified?: boolean;
   role: ROLE;
   auths: IAuthProviders[];
-  walletId: string;
+  walletId?: mongoose.Types.ObjectId;
   isApproved?: boolean;
   commissionRate?: number;
 }

@@ -65,6 +65,10 @@ const userSchema = new Schema<IUser>(
     commissionRate: {
       type: Number,
     },
+    walletId: {
+      type: Schema.Types.ObjectId,
+      ref: "Wallet",
+    },
     auths: [authProviderSchema],
   },
   { timestamps: true, versionKey: false }

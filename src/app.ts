@@ -12,6 +12,11 @@ app.use(
 );
 app.use(express.json());
 app.use(cors());
+app.use((req, res, next) => {
+  console.log("➡️ Incoming:", req.method, req.originalUrl);
+  console.log("Body:", req.body);
+  next();
+});
 app.use("/api/v1", router);
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
