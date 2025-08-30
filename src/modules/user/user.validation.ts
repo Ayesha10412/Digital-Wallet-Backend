@@ -18,7 +18,8 @@ export const createUserZodSchema = z.object({
     .regex(
       /^(?:\+8801[3-9]\d{8}|01[3-9]\d{8})$/,
       "Invalid Bangladeshi phone number"
-    ),
+    )
+    .optional(),
 
   address: z
     .string({ invalid_type_error: "Address must be string" })
