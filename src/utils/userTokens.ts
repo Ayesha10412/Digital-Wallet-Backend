@@ -39,12 +39,12 @@ export const createNewAccessTokenWithRefreshToken = async (
     throw new AppError(httpStatus.BAD_REQUEST, "User not found!");
   }
   if (
-    isUserExist?.Status === Status.BLOCKED ||
-    isUserExist.Status === Status.INACTIVE
+    isUserExist?.status === Status.BLOCKED ||
+    isUserExist.status === Status.INACTIVE
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `User is ${isUserExist.Status}!`
+      `User is ${isUserExist.status}!`
     );
   }
   if (isUserExist?.isDeleted) {

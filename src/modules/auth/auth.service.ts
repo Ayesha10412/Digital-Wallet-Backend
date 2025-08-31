@@ -11,7 +11,8 @@ const getNewAccessToken = async (refreshToken: string) => {
     refreshToken
   );
   return {
-    accessToken: newAccessToken,
+    accessToken: newAccessToken.accessToken,
+    refreshToken,
   };
 };
 const resetPassword = async (

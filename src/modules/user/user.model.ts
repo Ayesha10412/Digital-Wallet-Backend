@@ -49,7 +49,7 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
-    Status: {
+    status: {
       type: String,
       enum: Object.values(Status),
       default: Status.ACTIVE,
