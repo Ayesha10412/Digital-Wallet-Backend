@@ -12,7 +12,17 @@ router.post(
   UserControllers.createUser
 );
 router.get("/all-users", checkAuth(ROLE.ADMIN), UserControllers.getAllUsers);
-router.get("/me", checkAuth("USER", "AGENT"), UserControllers.getOwnProfile);
+router.get(
+  "/me",
+  checkAuth("USER", "ADMIN", "AGENT"),
+  UserControllers.getOwnProfile
+);
+router.patch(
+  "/me",
+  checkAuth("USER", "AGENT", "ADMIN"),
+  UserControllers.updateOwnProfile
+);
+
 router.patch(
   "/:id",
   validateRequest(updateUserZodSchema),

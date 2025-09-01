@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import AppError from "../errorHelpers/AppError";
 import { IAuthProviders, IUser, ROLE } from "./user.interface";
@@ -84,9 +85,21 @@ const getAllUsers = async () => {
 const getOwnProfile = async (email: string) => {
   return await User.findOne({ email });
 };
+
+const updateOwnProfile = async (id: string, payload: any) => {
+  delete payload.role;
+  delete payload.walletId;
+  delete payload.status;
+  return await User.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  }).select("-password");
+};
+
 export const UserServices = {
   createUser,
   getOwnProfile,
   updateUser,
   getAllUsers,
+  updateOwnProfile,
 };

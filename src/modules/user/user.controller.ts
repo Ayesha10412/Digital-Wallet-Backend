@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
@@ -61,9 +62,24 @@ const getOwnProfile = catchAsync(
   }
 );
 
+const updateOwnProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user!.userId;
+    const payload = req.body;
+    const updatedUser = await UserServices.updateOwnProfile(userId, payload);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Profile updated successfully!",
+      data: updatedUser,
+    });
+  }
+);
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   updateUser,
   getOwnProfile,
+  updateOwnProfile,
 };
