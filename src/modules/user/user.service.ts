@@ -81,5 +81,12 @@ const getAllUsers = async () => {
     },
   };
 };
-
-export const UserServices = { createUser, updateUser, getAllUsers };
+const getOwnProfile = async (email: string) => {
+  return await User.findOne({ email });
+};
+export const UserServices = {
+  createUser,
+  getOwnProfile,
+  updateUser,
+  getAllUsers,
+};

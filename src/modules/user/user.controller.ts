@@ -48,9 +48,22 @@ const getAllUsers = catchAsync(
     });
   }
 );
+const getOwnProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const email = req.user!.email;
+    const user = await UserServices.getOwnProfile(email);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User retrieved successfully!",
+      data: user,
+    });
+  }
+);
 
 export const UserControllers = {
   createUser,
   getAllUsers,
   updateUser,
+  getOwnProfile,
 };

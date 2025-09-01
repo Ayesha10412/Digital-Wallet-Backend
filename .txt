@@ -1,0 +1,205 @@
+Perfect! Let’s break this down **step by step** based on your requirements, and I’ll map it to APIs, modules, and the flow you need. I’ll keep it theoretical so you know exactly **what to build**.
+
+---
+
+## 1️⃣ **Authentication & Authorization Module (`auth/`)**
+
+### Purpose:
+
+* Handle user login, token creation, role-based access control.
+
+### Features:
+
+* JWT-based login
+* Password hashing with bcrypt
+* Refresh token system
+* Role-based middleware (`checkAuth`)
+
+### APIs:
+
+| Method | Endpoint             | Description                               | Roles               |
+| ------ | -------------------- | ----------------------------------------- | ------------------- |
+| POST   | /auth/register       | Register new user/agent/admin             | Public              |
+| POST   | /auth/login          | Login and receive access + refresh tokens | Public              |
+| POST   | /auth/refresh-token  | Get new access token using refresh token  | All logged-in users |
+| POST   | /auth/logout         | Clear cookies & logout                    | All logged-in users |
+| POST   | /auth/reset-password | Reset password                            | Logged-in users     |
+
+**Notes:**
+
+* `register` should also create a wallet automatically with initial balance.
+* Middleware `checkAuth` will guard routes based on roles (`admin`, `user`, `agent`).
+
+---
+
+## 2️⃣ **User Module (`user/`)**
+
+### Purpose:
+
+* Manage users and agents
+* Admin view + block/unblock functionality
+
+### Schemas:
+
+* `User` schema:
+
+  * Fields: `_id`, `name`, `email`, `password`, `role`, `Status` (ACTIVE/BLOCKED/INACTIVE), `isDeleted`
+
+### APIs:
+
+| Method | Endpoint            | Description           | Roles        |
+| ------ | ------------------- | --------------------- | ------------ |
+| GET    | /users              | Admin can Get all users/agents  | admin        |
+| GET    | /users/\:id         | Admin can Get single user info  | admin / self |
+| PATCH  | /users/:id          | admin can update user info     |
+| PATCH  | /users/me           | Update own info       | user / agent |
+| GET    | /users/me           | Get own profile       | user / agent |
+
+**Notes:**
+
+* Only admin can block/unblock users and approve agents.
+
+---
+
+## 3️⃣ **Wallet Module (`wallet/`)**
+
+### Purpose:
+
+* Keep track of wallet balances
+* Allow users/agents to perform transactions
+
+### Schemas:
+
+* `Wallet`:
+
+  * `_id`, `userId`, `balance`, `status` (ACTIVE/BLOCKED), `currency`
+
+### APIs:
+
+| Method | Endpoint                 | Description                                   | Roles         |
+| ------ | ------------------------ | --------------------------------------------- | ------------- |
+| POST   | /wallet/deposit          | Add money to own wallet                       | user / agent  |
+| POST   | /wallet/withdraw         | Withdraw from own wallet                      | user / agent  |
+| POST   | /wallet/send             | Send money to another user                    | user / agent  |
+| POST   | /wallet/cash-in          | Admin/Agent adds money to another user        | agent / admin |
+| POST   | /wallet/cash-out         | Admin/Agent withdraws money from another user | agent / admin |
+| GET    | /wallet/\:id             | Get wallet balance                            | admin / self  |
+| GET    | /wallet/history/\:userId | Get transaction history                       | admin / self  |
+
+**Notes:**
+
+* Always check balance before withdrawal.
+* Blocked wallets cannot transact.
+
+---
+
+## 4️⃣ **Transaction Module (`transaction/`)**
+
+### Purpose:
+
+* Store and track all money operations
+* Optional: Track agent commissions
+
+### Schemas:
+
+* `Transaction`:
+
+  * `_id`, `fromUser`, `toUser`, `amount`, `fee`, `commission`, `type` (send/deposit/withdraw/cash-in/out), `status` (pending/completed/reversed), `timestamp`
+
+### APIs:
+
+| Method | Endpoint           | Description            | Roles        |
+| ------ | ------------------ | ---------------------- | ------------ |
+| GET    | /transactions/me   | Get own transactions   | user / agent |
+| GET    | /transactions/all  | Get all transactions   | admin        |
+| GET    | /transactions/\:id | Get single transaction | admin / self |
+
+**Notes:**
+
+* Ensure atomicity: deduct balance from sender → update receiver → save transaction.
+* Consider Mongoose `session` for transaction-like operations.
+
+---
+
+## 5️⃣ **Middleware (`middlewares/`)**
+
+### Key middleware:
+
+1. **`checkAuth`**
+
+   * Extract token from headers
+   * Verify JWT
+   * Check user exists & role
+   * Throw error if unauthorized
+
+2. **`errorHandler`**
+
+   * Capture all errors and send proper HTTP response
+   * Format: `{ success: false, message, stack }`
+
+---
+
+## 6️⃣ **Utility Functions (`utils/`)**
+
+* JWT helpers: `generateToken`, `verifyToken`
+* Cookie helpers: `setAuthCookie`
+* Async wrapper: `catchAsync` to avoid `try/catch` repetition
+* Balance helper: `updateWalletBalance` (adds or subtracts safely)
+* Transaction helper: `createTransaction`
+
+---
+
+## 7️⃣ **Flow of Operations**
+
+### User adds money
+
+1. User calls `/wallet/deposit` → `checkAuth` validates
+2. Wallet balance updated
+3. Transaction created
+4. Response sent
+
+### User sends money
+
+1. User calls `/wallet/send` → validate sender balance
+2. Deduct sender → add receiver
+3. Create transaction record
+4. Response sent
+
+### Admin views all users
+
+1. Call `/users` → `checkAuth` ensures `admin`
+2. Fetch users
+3. Return list
+
+### Token Refresh
+
+1. Client calls `/auth/refresh-token` with refresh token cookie
+2. Backend verifies token
+3. Generates new access token
+4. Sets cookies and returns token
+
+---
+
+## 8️⃣ **Postman Testing**
+
+1. **Register users** → `/auth/register`
+2. **Login** → `/auth/login` → store `accessToken` in Authorization Bearer
+3. **Test user actions** → `/wallet/deposit`, `/wallet/send`
+4. **Test admin actions** → `/users`, `/wallet/history/:userId`
+5. **Test refresh token** → `/auth/refresh-token` using cookie
+6. **Test role restrictions** → try accessing admin routes with user token → should fail
+
+---
+
+## ✅ **Summary**
+
+* **Modules:** auth, user, wallet, transaction
+* **Roles:** admin, user, agent
+* **JWT + bcrypt:** authentication
+* **Role-based routes:** authorization
+* **Wallet + Transaction logic:** ensure balance integrity
+* **Error handling:** consistent, modular
+* **Postman:** fully test all endpoints
+
+---
+

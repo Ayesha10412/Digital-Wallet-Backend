@@ -7,3 +7,8 @@ declare global {
     }
   }
 }
+// & {
+//         email: string;
+//         role: string;
+//         id?: string;
+//       };
