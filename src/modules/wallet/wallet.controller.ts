@@ -9,7 +9,6 @@ import AppError from "../errorHelpers/AppError";
 const addMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user!.userId;
-    console.log(req.user);
     const { amount } = req.body;
     const wallet = await WalletServices.addMoneyToWallet(userId, amount);
     sendResponse(res, {
@@ -20,4 +19,20 @@ const addMoney = catchAsync(
     });
   }
 );
-export const WalletControllers = { addMoney };
+
+const withdrawMoney = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user!.userId;
+    console.log(req.user);
+    const { amount } = req.body;
+    const wallet = await WalletServices.withdrawMoney(userId, amount);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Money withdrawn successfully!",
+      data: wallet,
+    });
+  }
+);
+
+export const WalletControllers = { addMoney, withdrawMoney };
