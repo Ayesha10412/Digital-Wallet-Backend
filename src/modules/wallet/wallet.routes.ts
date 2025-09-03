@@ -16,11 +16,15 @@ router.post(
   checkAuth("USER", "AGENT"),
   WalletControllers.cashOutMoney
 );
-// router.get("/:id", checkAuth("USER", "AGENT"), WalletControllers.getBalance);
-// router.get(
-//   "/history/:userId",
-//   checkAuth("USER", "AGENT"),
-//   WalletControllers.getHistory
-// );
+router.get(
+  "/:id",
+  checkAuth("USER", "AGENT"),
+  WalletControllers.getWalletBalance
+);
+router.get(
+  "/history/:userId",
+  checkAuth("USER", "AGENT"),
+  WalletControllers.getTransactionHistory
+);
 
 export const WalletRoutes = router;

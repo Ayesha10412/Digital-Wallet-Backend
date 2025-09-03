@@ -125,6 +125,22 @@ const cashOutMoney = async (
   });
   return wallet;
 };
+
+//get wallet balance
+const getWalletBalance = async (userId: string) => {
+  const wallet = await Wallet.findOne({ owner: userId });
+  if (!wallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Wallet not found!");
+  }
+  return wallet;
+};
+
+//get transaction history
+const getTransactionHistory = async (userId: string) => {
+  return await Transaction.find({
+    $or: [{ fromUser: userId }, { toUser: userId }],
+  }).sort({ createdAt: -1 });
+};
 export const WalletServices = {
   createWallet,
   sendMoney,
@@ -132,4 +148,6 @@ export const WalletServices = {
   addMoneyToWallet,
   cashIn,
   cashOutMoney,
+  getWalletBalance,
+  getTransactionHistory,
 };

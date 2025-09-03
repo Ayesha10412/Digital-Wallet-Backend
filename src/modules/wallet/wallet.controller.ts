@@ -79,10 +79,37 @@ const cashOutMoney = catchAsync(
   }
 );
 
+const getWalletBalance = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const wallet = await WalletServices.getWalletBalance(id);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Wallet balanced fetched!",
+      data: wallet,
+    });
+  }
+);
+const getTransactionHistory = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+    const wallet = await WalletServices.getTransactionHistory(userId!);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Transaction history fetched!",
+      data: wallet,
+    });
+  }
+);
+
 export const WalletControllers = {
   addMoney,
   cashIn,
   withdrawMoney,
   sendMoney,
   cashOutMoney,
+  getWalletBalance,
+  getTransactionHistory,
 };
