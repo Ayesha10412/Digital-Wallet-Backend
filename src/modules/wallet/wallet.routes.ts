@@ -11,11 +11,11 @@ router.post(
 );
 router.post("/send", checkAuth("USER", "AGENT"), WalletControllers.sendMoney);
 router.post("/cash-in", checkAuth("USER", "AGENT"), WalletControllers.cashIn);
-// router.post(
-//   "/cash-out",
-//   checkAuth("USER", "AGENT"),
-//   WalletControllers.cashOutMoney
-// );
+router.post(
+  "/cash-out",
+  checkAuth("USER", "AGENT"),
+  WalletControllers.cashOutMoney
+);
 // router.get("/:id", checkAuth("USER", "AGENT"), WalletControllers.getBalance);
 // router.get(
 //   "/history/:userId",
