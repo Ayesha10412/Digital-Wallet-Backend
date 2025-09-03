@@ -48,4 +48,21 @@ const sendMoney = catchAsync(
     });
   }
 );
-export const WalletControllers = { addMoney, withdrawMoney, sendMoney };
+
+//cash-in(agent/admin adds to user)
+const cashIn = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const agentId = req.user!.userId;
+    console.log(agentId);
+    const { userId, amount } = req.body;
+    const wallet = await WalletServices.cashIn(agentId, userId, amount);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Cash-In successfully!",
+      data: wallet,
+    });
+  }
+);
+
+export const WalletControllers = { addMoney, cashIn, withdrawMoney, sendMoney };

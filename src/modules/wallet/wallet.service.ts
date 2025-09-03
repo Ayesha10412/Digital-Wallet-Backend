@@ -85,10 +85,27 @@ const sendMoney = async (
   });
   return { senderWallet, receiverWallet };
 };
-
+//cash-in(agent/admin adds to user)
+const cashIn = async (agentId: string, userId: string, amount: number) => {
+  const wallet = await Wallet.findOne({ owner: userId });
+  if (!wallet) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Wallet not Found!");
+  }
+  wallet.balance += amount;
+  await wallet.save();
+  await Transaction.create({
+    fromUser: agentId,
+    toUser: userId,
+    amount,
+    type: TransactionType.CASH_IN,
+    status: TransactionStatus.COMPLETED,
+  });
+  return wallet;
+};
 export const WalletServices = {
   createWallet,
   sendMoney,
   withdrawMoney,
   addMoneyToWallet,
+  cashIn,
 };
