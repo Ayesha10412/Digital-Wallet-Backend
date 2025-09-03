@@ -53,4 +53,42 @@ const withdrawMoney = async (userId: string, amount: number) => {
   return wallet;
 };
 
-export const WalletServices = { createWallet, withdrawMoney, addMoneyToWallet };
+const sendMoney = async (
+  fromUserId: string,
+  toUserId: string,
+  amount: number
+) => {
+  if (fromUserId === toUserId)
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You cannot send money to yourself!"
+    );
+  const senderWallet = await Wallet.findOne({ owner: fromUserId });
+  const receiverWallet = await Wallet.findOne({ owner: toUserId });
+  console.log(senderWallet);
+  console.log("receiverWallet", receiverWallet);
+  if (!senderWallet || !receiverWallet)
+    throw new AppError(httpStatus.BAD_REQUEST, "Wallet not found!");
+
+  if (senderWallet.balance < amount)
+    throw new AppError(httpStatus.BAD_REQUEST, "Insufficient Balance!");
+  senderWallet.balance -= amount;
+  receiverWallet.balance += amount;
+  await senderWallet.save();
+  await receiverWallet.save();
+  await Transaction.create({
+    fromUser: fromUserId,
+    toUser: toUserId,
+    amount,
+    type: TransactionType.SEND,
+    status: TransactionStatus.COMPLETED,
+  });
+  return { senderWallet, receiverWallet };
+};
+
+export const WalletServices = {
+  createWallet,
+  sendMoney,
+  withdrawMoney,
+  addMoneyToWallet,
+};

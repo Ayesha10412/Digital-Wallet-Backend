@@ -34,5 +34,18 @@ const withdrawMoney = catchAsync(
     });
   }
 );
-
-export const WalletControllers = { addMoney, withdrawMoney };
+const sendMoney = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const fromUserId = req.user!.userId;
+    console.log(fromUserId);
+    const { toUserId, amount } = req.body;
+    const result = await WalletServices.sendMoney(fromUserId, toUserId, amount);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Money send successfully!",
+      data: result,
+    });
+  }
+);
+export const WalletControllers = { addMoney, withdrawMoney, sendMoney };

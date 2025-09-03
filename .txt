@@ -8,7 +8,7 @@ Perfect! Let’s break this down **step by step** based on your requirements, an
 
 * Handle user login, token creation, role-based access control.
 
-### Features:
+### Features:✅
 
 * JWT-based login
 * Password hashing with bcrypt
@@ -32,7 +32,7 @@ Perfect! Let’s break this down **step by step** based on your requirements, an
 
 ---
 
-## 2️⃣ **User Module (`user/`)**
+## 2️⃣ **User Module (`user/`)**✅
 
 ### Purpose:
 

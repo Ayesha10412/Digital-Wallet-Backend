@@ -9,7 +9,7 @@ router.post(
   checkAuth("USER", "AGENT"),
   WalletControllers.withdrawMoney
 );
-// router.post("/send", checkAuth("USER", "AGENT"), WalletControllers.sendMoney);
+router.post("/send", checkAuth("USER", "AGENT"), WalletControllers.sendMoney);
 // router.post(
 //   "/cash-in",
 //   checkAuth("USER", "AGENT"),
