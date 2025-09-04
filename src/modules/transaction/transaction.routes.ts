@@ -11,7 +11,7 @@ router.get(
 router.get("/all", checkAuth("ADMIN"), TransactionController.getAllTransaction);
 router.get(
   "/:id",
-  checkAuth("USER", "AGENT", "ADMIN"),
+  checkAuth("USER", "ADMIN"),
   TransactionController.getTransactionById
 );
 export const TransactionRoutes = router;

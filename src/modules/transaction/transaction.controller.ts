@@ -33,10 +33,6 @@ const getTransactionById = catchAsync(
     const { id } = req.params;
     const userId = req.user!.userId;
     const role = req.user!.role;
-    console.log("req.user in controller:", req.user);
-    console.log("params.id:", req.params.id);
-    console.log("userId:", req.user?.userId, "role:", req.user?.role);
-
     const transaction = await TransactionServices.getTransactionById(
       id!,
       userId,

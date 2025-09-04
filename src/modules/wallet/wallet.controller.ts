@@ -5,7 +5,6 @@ import { WalletServices } from "./wallet.service";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
-import AppError from "../errorHelpers/AppError";
 const addMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user!.userId;
@@ -23,7 +22,7 @@ const addMoney = catchAsync(
 const withdrawMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user!.userId;
-    console.log(req.user);
+    //console.log(req.user);
     const { amount } = req.body;
     const wallet = await WalletServices.withdrawMoney(userId, amount);
     sendResponse(res, {
@@ -37,7 +36,7 @@ const withdrawMoney = catchAsync(
 const sendMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const fromUserId = req.user!.userId;
-    console.log(fromUserId);
+    // console.log(fromUserId);
     const { toUserId, amount } = req.body;
     const result = await WalletServices.sendMoney(fromUserId, toUserId, amount);
     sendResponse(res, {
@@ -67,7 +66,7 @@ const cashIn = catchAsync(
 const cashOutMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const agentId = req.user!.userId;
-    console.log(agentId);
+    //console.log(agentId);
     const { userId, amount } = req.body;
     const wallet = await WalletServices.cashOutMoney(agentId, userId, amount);
     sendResponse(res, {

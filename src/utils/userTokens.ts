@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../config/env";
 import { IUser, Status } from "../modules/user/user.interface";
@@ -7,12 +8,12 @@ import AppError from "../modules/errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 export const createUserTokens = (user: Partial<IUser>) => {
   const jwtPayload = {
-    userId: user._id,
-    email: user.email,
+    userId: user._id!.toString(),
+    email: user.email!,
     role: user.role,
   };
   const accessToken = generateToken(
-    jwtPayload,
+    jwtPayload as JwtPayload,
     envVars.JWT_ACCESS_SECRET,
     envVars.JWT_ACCESS_EXPIRES
   );
