@@ -23,6 +23,13 @@ const createUser = async (payload: Partial<IUser>) => {
     provider: "credentials",
     providerId: email!,
   };
+  if (payload.commissionRate && payload.role !== ROLE.AGENT) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Only agents can have commission rates"
+    );
+  }
+
   const user = await User.create({
     email,
     password: hashedPassword,

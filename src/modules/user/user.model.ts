@@ -64,6 +64,7 @@ const userSchema = new Schema<IUser>(
     },
     commissionRate: {
       type: Number,
+      default: 0,
     },
     walletId: {
       type: Schema.Types.ObjectId,

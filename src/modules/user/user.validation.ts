@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import z from "zod";
 import { ROLE, Status } from "./user.interface";
 
@@ -28,6 +29,11 @@ export const createUserZodSchema = z.object({
     .optional(),
   // role:z.enum(["ADMIN","USER","AGENT"]),
   // Status:z.enum(["ACTIVE","INACTIVE"])
+  commissionRate: z
+    .number()
+    .min(0, { message: "Commission must be 0 or higher" })
+    .max(100, { message: "Commission cannot exceed 100%" })
+    .optional(),
 });
 
 export const updateUserZodSchema = z.object({
@@ -67,7 +73,9 @@ export const updateUserZodSchema = z.object({
   isApproved: z
     .boolean({ invalid_type_error: "IsDeleted must be true or false!" })
     .optional(),
-  commissionRate: z.number().min(0).optional(),
+  commissionRate: z.number().min(0).max(100).optional(),
+
+  //commissionRate: z.number().min(0).optional(),
   // role:z.enum(["ADMIN","USER","AGENT"]),
   // Status:z.enum(["ACTIVE","INACTIVE"])
 });

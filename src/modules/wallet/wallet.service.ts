@@ -8,6 +8,7 @@ import { Transaction } from "../transaction/transaction.model";
 import { IWallet } from "./wallet.interface";
 import { Wallet } from "./wallet.model";
 import httpStatus from "http-status-codes";
+import { User } from "../user/user.model";
 const createWallet = async (payload: Partial<IWallet>) => {
   const wallet = await Wallet.create(payload);
   return wallet;
@@ -91,8 +92,24 @@ const cashIn = async (agentId: string, userId: string, amount: number) => {
   if (!wallet) {
     throw new AppError(httpStatus.BAD_REQUEST, "Wallet not Found!");
   }
+  //get agent commission
+  const agent = await User.findById(agentId);
+  if (!agent || agent.role !== "AGENT" || !agent.isApproved) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Agent not authorized!");
+  }
   wallet.balance += amount;
   await wallet.save();
+  //apply commission
+  const commission = agent.commissionRate
+    ? (amount * agent.commissionRate) / 100
+    : 0;
+  if (commission > 0) {
+    const agentWallet = await Wallet.findOne({ owner: userId });
+    if (agentWallet) {
+      agentWallet.balance += commission;
+      await agentWallet.save();
+    }
+  }
   await Transaction.create({
     fromUser: agentId,
     toUser: userId,
@@ -114,14 +131,31 @@ const cashOutMoney = async (
   }
   if (wallet.balance < amount)
     throw new AppError(httpStatus.BAD_REQUEST, "Insufficient Balance!");
+  const agent = await User.findById(agentId);
+  if (!agent || agent.role !== "AGENT" || !agent.isApproved) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Agent not authorized!");
+  }
+
   wallet.balance -= amount;
   await wallet.save();
+  //apply commission
+  const commission = agent.commissionRate
+    ? (amount * agent.commissionRate) / 100
+    : 0;
+  if (commission > 0) {
+    const agentWallet = await Wallet.findOne({ owner: agentId });
+    if (agentWallet) {
+      agentWallet.balance += commission;
+      await agentWallet.save();
+    }
+  }
   await Transaction.create({
     fromUser: userId,
     toUser: agentId,
     amount,
     type: TransactionType.CASH_OUT,
     status: TransactionStatus.COMPLETED,
+    commission,
   });
   return wallet;
 };

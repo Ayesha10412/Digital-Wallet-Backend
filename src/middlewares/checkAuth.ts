@@ -38,6 +38,7 @@ export const checkAuth =
       if (!authRoles.includes(verifiedToken.role)) {
         throw new AppError(405, "You're not permitted to view this route!");
       }
+
       req.user = verifiedToken;
       next();
     } catch (error) {
