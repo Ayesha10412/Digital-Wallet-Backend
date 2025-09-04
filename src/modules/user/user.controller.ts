@@ -64,7 +64,7 @@ const getOwnProfile = catchAsync(
 
 const updateOwnProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user!.userId;
+    const userId = req.user.userId;
     const payload = req.body;
     const updatedUser = await UserServices.updateOwnProfile(userId, payload);
     sendResponse(res, {
