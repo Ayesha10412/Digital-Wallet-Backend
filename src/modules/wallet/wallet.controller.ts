@@ -81,7 +81,7 @@ const cashOutMoney = catchAsync(
 const getWalletBalance = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const wallet = await WalletServices.getWalletBalance(id);
+    const wallet = await WalletServices.getWalletBalance(id as string);
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,

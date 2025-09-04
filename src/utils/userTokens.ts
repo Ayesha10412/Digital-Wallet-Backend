@@ -8,8 +8,8 @@ import AppError from "../modules/errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 export const createUserTokens = (user: Partial<IUser>) => {
   const jwtPayload = {
-    userId: user._id!.toString(),
-    email: user.email!,
+    userId: user._id,
+    email: user.email,
     role: user.role,
   };
   const accessToken = generateToken(

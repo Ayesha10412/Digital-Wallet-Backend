@@ -6,6 +6,7 @@ import { envVars } from "../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "../modules/user/user.model";
 import { Status } from "../modules/user/user.interface";
+import { AuthUser } from "../modules/Interfaces";
 export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +18,7 @@ export const checkAuth =
       const verifiedToken = verifyToken(
         accessToken,
         envVars.JWT_ACCESS_SECRET
-      ) as JwtPayload;
+      ) as JwtPayload & AuthUser;
       const isUserExist = await User.findOne({ email: verifiedToken.email });
       if (!isUserExist) {
         throw new AppError(httpStatus.BAD_REQUEST, "User not found!");
