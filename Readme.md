@@ -1,6 +1,6 @@
 # 💳 Digital Wallet API (Express + Mongoose)
 
-A secure, modular, and role-based backend API for a **digital wallet system** (inspired by bKash/Nagad), built with **Express.js, TypeScript, and Mongoose**.
+A secure, modular, and role-based backend API for a **digital wallet system**, built with **Express.js, TypeScript, and Mongoose**.
 Supports **users**, **agents**, and **admins** with authentication, wallet management, transactions, and role-based access control.
 
 ---
