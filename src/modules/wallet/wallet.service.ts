@@ -64,27 +64,55 @@ const sendMoney = async (
       httpStatus.BAD_REQUEST,
       "You cannot send money to yourself!"
     );
-  const senderWallet = await Wallet.findOne({ owner: fromUserId });
-  const receiverWallet = await Wallet.findOne({ owner: toUserId });
-  console.log(senderWallet);
-  console.log("receiverWallet", receiverWallet);
-  if (!senderWallet || !receiverWallet)
-    throw new AppError(httpStatus.BAD_REQUEST, "Wallet not found!");
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  console.log("Transaction started!");
+  try {
+    const senderWallet = await Wallet.findOne({ owner: fromUserId }).session(
+      session
+    );
+    const receiverWallet = await Wallet.findOne({ owner: toUserId }).session(
+      session
+    );
+    console.log(senderWallet);
+    console.log("receiverWallet", receiverWallet);
+    if (!senderWallet || !receiverWallet)
+      throw new AppError(httpStatus.BAD_REQUEST, "Wallet not found!");
 
-  if (senderWallet.balance < amount)
-    throw new AppError(httpStatus.BAD_REQUEST, "Insufficient Balance!");
-  senderWallet.balance -= amount;
-  receiverWallet.balance += amount;
-  await senderWallet.save();
-  await receiverWallet.save();
-  await Transaction.create({
-    fromUser: fromUserId,
-    toUser: toUserId,
-    amount,
-    type: TransactionType.SEND,
-    status: TransactionStatus.COMPLETED,
-  });
-  return { senderWallet, receiverWallet };
+    if (senderWallet.balance < amount)
+      throw new AppError(httpStatus.BAD_REQUEST, "Insufficient Balance!");
+    //update balance
+    senderWallet.balance -= amount;
+    receiverWallet.balance += amount;
+    console.log("update balances");
+    //save both in the same transaction
+    await senderWallet.save({ session });
+    await receiverWallet.save({ session });
+    console.log("save both");
+    //create the transaction record inside same session
+    await Transaction.create(
+      [
+        {
+          fromUser: fromUserId,
+          toUser: toUserId,
+          amount,
+          type: TransactionType.SEND,
+          status: TransactionStatus.COMPLETED,
+        },
+      ],
+      { session }
+    );
+    console.log("created successfully");
+    //commit transaction (apply all)
+    await session.commitTransaction();
+    console.log("commited");
+    session.endSession();
+    return { senderWallet, receiverWallet };
+  } catch (error) {
+    //roll back all if any step fails
+    await session.abortTransaction();
+    throw error;
+  }
 };
 //cash-in(agent/admin adds to user)
 const cashIn = async (agentId: string, userId: string, amount: number) => {
