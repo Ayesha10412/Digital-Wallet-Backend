@@ -11,6 +11,10 @@ interface EnvConfig {
   JWT_REFRESH_EXPIRES: string;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;
+  FRONTEND_URL: string;
+  GOOGLE_CLIENT_ID: string;
+  CLIENT_SECRET: string;
+  GOOGLE_CALLBACK_URL: string;
 }
 const loadEnvVariables = (): EnvConfig => {
   const requiredEnvVariables: string[] = [
@@ -24,6 +28,10 @@ const loadEnvVariables = (): EnvConfig => {
     "JWT_ACCESS_EXPIRES",
     "JWT_REFRESH_SECRET",
     "JWT_ACCESS_SECRET",
+    "FRONTEND_URL",
+    "GOOGLE_CLIENT_ID",
+    "CLIENT_SECRET",
+    "GOOGLE_CALLBACK_URL",
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -42,6 +50,10 @@ const loadEnvVariables = (): EnvConfig => {
     JWT_ACCESS_EXPIRES: process.env.JWT_ACCESS_EXPIRES as string,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
     JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET as string,
+    FRONTEND_URL: process.env.FRONTEND_URL as string,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
+    CLIENT_SECRET: process.env.CLIENT_SECRET as string,
+    GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
   };
 };
 export const envVars = loadEnvVariables();
