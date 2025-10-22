@@ -20,7 +20,13 @@ app.use(passport.session());
 app.use(cookieParser());
 app.use(express.json());
 app.set("trust proxy", 1);
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 // app.use((req, res, next) => {
 //   console.log("➡️ Incoming:", req.method, req.originalUrl);
 //   console.log("Body:", req.body);

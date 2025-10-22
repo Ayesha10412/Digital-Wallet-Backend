@@ -1,5 +1,4 @@
 import { Response } from "express";
-import { envVars } from "../config/env";
 
 export interface AuthToken {
   accessToken?: string;
@@ -9,14 +8,14 @@ export const setAuthCookie = (res: Response, tokenInfo: AuthToken) => {
   if (tokenInfo.accessToken) {
     res.cookie("accessToken", tokenInfo.accessToken, {
       httpOnly: true,
-      secure: envVars.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     });
   }
   if (tokenInfo.refreshToken) {
     res.cookie("refreshToken", tokenInfo.accessToken, {
       httpOnly: true,
-      secure: envVars.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     });
   }
