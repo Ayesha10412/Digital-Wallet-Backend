@@ -8,6 +8,8 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import "./config/passport";
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   expressSession({
     secret: "Your Secret",
@@ -18,7 +20,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
-app.use(express.json());
+
 app.set("trust proxy", 1);
 // app.use(cors());
 app.use(

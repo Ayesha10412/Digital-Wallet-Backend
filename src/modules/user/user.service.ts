@@ -94,6 +94,9 @@ const getOwnProfile = async (email: string) => {
 };
 
 const updateOwnProfile = async (id: string, payload: any) => {
+   if (!payload || typeof payload !== "object") {
+    throw new Error("Invalid payload received.");
+  }
   delete payload.role;
   delete payload.walletId;
   delete payload.status;

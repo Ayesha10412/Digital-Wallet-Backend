@@ -33,6 +33,21 @@ const withdrawMoney = catchAsync(
     });
   }
 );
+
+//get only email and name of all users
+const getRecipients = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user!.userId;
+    const result = await WalletServices.getRecipients(userId);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Retrieved name & email successfully!",
+      data: result,
+    });
+  }
+);
+
 const sendMoney = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const fromUserId = req.user!.userId;
@@ -52,7 +67,7 @@ const sendMoney = catchAsync(
 const cashIn = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const agentId = req.user!.userId;
-    //console.log(agentId);
+    console.log(agentId);
     const { userId, amount } = req.body;
     const wallet = await WalletServices.cashIn(agentId, userId, amount);
     sendResponse(res, {
@@ -111,4 +126,5 @@ export const WalletControllers = {
   cashOutMoney,
   getWalletBalance,
   getTransactionHistory,
+  getRecipients,
 };

@@ -9,6 +9,11 @@ router.post(
   checkAuth("USER", "AGENT"),
   WalletControllers.withdrawMoney
 );
+router.get(
+  "/recipients",
+  checkAuth("USER", "AGENT", "ADMIN"),
+  WalletControllers.getRecipients
+);
 router.post("/send", checkAuth("USER", "AGENT"), WalletControllers.sendMoney);
 router.post("/cash-in", checkAuth("USER", "AGENT"), WalletControllers.cashIn);
 router.post(

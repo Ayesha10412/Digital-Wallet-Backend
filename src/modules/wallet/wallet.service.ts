@@ -54,6 +54,16 @@ const withdrawMoney = async (userId: string, amount: number) => {
   return wallet;
 };
 
+//get only name and email of all users
+const getRecipients = async (currentUserId: string) => {
+  const recipients = await User.find(
+    { _id: { $ne: currentUserId }, role: "USER", status: "ACTIVE" },
+    "name email"
+  );
+  //console.log(recipients);
+  return recipients;
+};
+
 const sendMoney = async (
   fromUserId: string,
   toUserId: string,
@@ -212,4 +222,5 @@ export const WalletServices = {
   cashOutMoney,
   getWalletBalance,
   getTransactionHistory,
+  getRecipients,
 };
